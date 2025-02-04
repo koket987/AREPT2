@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Servidor Web</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+<h1>Bienvenido al Servidor Web</h1>
+<form id="getForm">
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" required>
+    <button type="submit">Enviar (GET)</button>
+</form>
+<div id="getResponse"></div>
+
+<h2>Imagenes de ejemplo:</h2>
+<div>
+    <img src="images/example.jpg" alt="Ejemplo" width="300">
+</div>
+
+<form id="postForm">
+    <label for="postname">Nombre:</label>
+    <input type="text" id="postname" name="postname" required>
+    <button type="submit">Enviar (POST)</button>
+</form>
+<div id="postResponse"></div>
+</body>
+</html>

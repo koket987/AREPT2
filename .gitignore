@@ -1,0 +1,45 @@
+# Ignorar la carpeta target (Maven)
+target/
+
+# Ignorar archivos generados por IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+*.ids
+*.orig
+
+# Ignorar archivos de configuración de IntelliJ
+out/
+.idea_modules/
+
+# Ignorar archivos de compilación
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignorar archivos de logs
+*.log
+
+# Ignorar archivos de configuración local
+*.properties
+*.yml
+
+# Ignorar archivos de dependencias (si usas Maven o Gradle)
+**/dependency-reduced-pom.xml
+**/mvnw
+**/mvnw.cmd
+**/.mvn/
+**/gradle/
+**/gradlew
+**/gradlew.bat
+**/.gradle/
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de entorno virtual (si usas Python)
+venv/
+env/
