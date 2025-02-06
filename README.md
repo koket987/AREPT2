@@ -1,17 +1,23 @@
 # Servidor Web en Java
 
-Este proyecto es un servidor web simple implementado en Java sin utilizar frameworks externos. Permite servir archivos estáticos (HTML, CSS, JS, imágenes) y proporciona una API REST para interacciones básicas, la cual se configura mediante expresiones lambda.
+Este proyecto es un servidor web simple implementado en Java sin utilizar frameworks externos. Permite servir archivos estáticos (HTML, CSS, JS, imágenes) y proporciona una API REST para interacciones básicas, configurada mediante expresiones lambda.
 
 El framework permite:
 - **Registrar endpoints REST**: usando métodos como `get()` para definir servicios.
 - **Extraer parámetros de consulta**: a través de la clase `HttpRequest`.
 - **Servir archivos estáticos**: configurando el directorio de archivos con `staticfiles()`.
 
-En este ejemplo, se utiliza el prefijo `/App` para los endpoints REST. Por ejemplo:
+En este ejemplo, se utiliza el prefijo **/App** para los endpoints REST. Por ejemplo:
 - `http://localhost:8080/App/hello?name=Pedro` responderá con un saludo.
 - `http://localhost:8080/App/pi` responderá con el valor de PI.
   
-Las solicitudes que no comiencen con `/App` se tratarán como peticiones de archivos estáticos.
+Las solicitudes que no comiencen con **/App** se tratarán como peticiones de archivos estáticos.
+
+> **Nota:** En esta versión, el endpoint `/App/hello` devuelve la respuesta en texto plano:
+>
+> **Hello Pedro**  
+>
+> y el endpoint `/App/pi` devuelve el valor de PI en texto plano. Los endpoints pueden modificarse para retornar JSON, si así se desea.
 
 ## Comenzando
 
@@ -47,9 +53,8 @@ Asegúrate de tener instalado lo siguiente:
    mvn exec:java -Dexec.mainClass="co.edu.eci.arep.ExampleApp"
    ```
 
-   **Nota:** En este ejemplo, se utiliza la clase `ExampleApp` para configurar los endpoints REST y arrancar el servidor. Esta clase hace uso de los siguientes métodos:
-   
-   - `staticfiles("/webroot")`: Configura la carpeta de archivos estáticos (se espera que los archivos se ubiquen en `target/classes/webroot`).
+   **Nota:** En este ejemplo se utiliza la clase `ExampleApp` para configurar los endpoints REST y arrancar el servidor. Esta clase realiza lo siguiente:
+   - `staticfiles("/webroot")`: Configura la carpeta de archivos estáticos (se espera que los archivos se ubiquen en `target/classes/webroot` o, según se configure, en `src/main/resources/www`).
    - `get("/hello", (req, resp) -> "Hello " + req.getValues("name"))`: Registra un servicio REST que responde saludando al usuario.
    - `get("/pi", (req, resp) -> String.valueOf(Math.PI))`: Registra un servicio REST que devuelve el valor de PI.
    - `start(args)`: Inicia el servidor en el puerto `8080`.
@@ -58,10 +63,25 @@ Asegúrate de tener instalado lo siguiente:
 
 ### Pruebas Unitarias
 
-Este proyecto incluye pruebas unitarias (por ejemplo, con JUnit 5). Para ejecutarlas, usa:
+Este proyecto incluye pruebas unitarias con JUnit 5. Para ejecutarlas, usa:
 
 ```bash
 mvn test
+```
+
+Las pruebas verifican, entre otros casos, que:
+- **GET** `http://localhost:8080/App/hello?name=Santiago` devuelve **Hello Santiago**.
+- **GET** `http://localhost:8080/App/pi` devuelve **3.141592653589793**.
+- Los archivos estáticos se sirven correctamente (por ejemplo, `index.html`).
+
+#### Ejemplo de ejecución manual de tests
+
+Si se requiere compilar y ejecutar manualmente un test, asegúrate de conocer la ruta a la biblioteca de JUnit y usa un comando similar a:
+
+```bash
+cd src
+javac -cp .:/path/to/junit-5.jar co/edu/eci/arep/HttpServerTest.java
+java -cp .:/path/to/junit-5.jar org.junit.platform.console.ConsoleLauncher --select-class co.edu.eci.arep.HttpServerTest
 ```
 
 ### Pruebas de extremo a extremo
@@ -76,56 +96,34 @@ http://localhost:8080
 
 Utiliza `curl` para probar los endpoints de la API:
 
-- **GET**  
-  Prueba el endpoint de saludo:
-  
+- **GET** (Saludo):  
   ```bash
   curl -X GET "http://localhost:8080/App/hello?name=Santiago"
   ```
-  
   Respuesta esperada:
-  
-  ```json
-  {"response":"Hello Santiago"}
+  ```
+  Hello Santiago
   ```
 
-- **GET**  
-  Prueba el endpoint que devuelve PI:
-  
+- **GET** (Valor de PI):  
   ```bash
   curl -X GET "http://localhost:8080/App/pi"
   ```
-  
   Respuesta esperada:
-  
-  ```json
-  {"response":"3.141592653589793"}
+  ```
+  3.141592653589793
   ```
 
 #### Archivos Estáticos
 
-Accede a los archivos incluidos (por ejemplo):
+Accede a los archivos incluidos, por ejemplo:
 
-- `http://localhost:8080/index.html`
+- `http://localhost:8080/App/index.html`  
+  (El servidor ajusta la ruta para servir `index.html` desde el directorio estático configurado).
+
 - `http://localhost:8080/styles.css`
 - `http://localhost:8080/script.js`
 - `http://localhost:8080/images/example1.png`
-
-### Pruebas Automatizadas
-
-Para ejecutar pruebas automatizadas (por ejemplo, si se utilizan tests basados en JUnit), usa:
-
-```bash
-mvn test
-```
-
-Si se requiere compilar y ejecutar manualmente un test, asegúrate de conocer la ruta a la biblioteca de JUnit y usa un comando similar a:
-
-```bash
-cd src
-javac -cp .:/path/to/junit-4.12.jar co/edu/eci/arep/HttpServerTest.java
-java -cp .:/path/to/junit-4.12.jar org.junit.runner.JUnitCore co.edu.eci.arep.HttpServerTest
-```
 
 ## Diseño del Sistema
 
@@ -135,7 +133,7 @@ El servidor sigue un diseño modular que permite la extensión de funcionalidade
 - **Manejo de archivos estáticos**: Permite servir HTML, CSS, JavaScript e imágenes desde un directorio configurado.
 - **Endpoints REST**: Permite registrar servicios REST de forma sencilla mediante expresiones lambda.
 
-El código se encuentra estructurado en clases:
+El código se encuentra estructurado en las siguientes clases:
 - `HttpRequest.java`: Procesa y parsea la petición HTTP.
 - `HttpResponse.java`: Permite gestionar la respuesta HTTP (ampliable para futuras funcionalidades).
 - `HttpServer.java`: Implementa el framework, con métodos para registrar endpoints (`get()`, `post()`), configurar archivos estáticos (`staticfiles()`) y arrancar el servidor (`start()`).
@@ -176,3 +174,4 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 - Inspiración de implementaciones de servidores web minimalistas.
 - Comunidad de código abierto por las mejores prácticas.
+
