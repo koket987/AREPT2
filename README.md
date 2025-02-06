@@ -50,10 +50,10 @@ Asegúrate de tener instalado lo siguiente:
 3. Ejecuta el servidor:
 
    ```bash
-   mvn exec:java -Dexec.mainClass="co.edu.eci.arep.ExampleApp"
+   mvn exec:java -Dexec.mainClass="co.edu.eci.arep.HttpServer"
    ```
 
-   **Nota:** En este ejemplo se utiliza la clase `ExampleApp` para configurar los endpoints REST y arrancar el servidor. Esta clase realiza lo siguiente:
+   **Nota:** En este ejemplo se utiliza la clase `HttpServer` para configurar los endpoints REST y arrancar el servidor. Esta clase realiza lo siguiente:
    - `staticfiles("/webroot")`: Configura la carpeta de archivos estáticos (se espera que los archivos se ubiquen en `target/classes/webroot` o, según se configure, en `src/main/resources/www`).
    - `get("/hello", (req, resp) -> "Hello " + req.getValues("name"))`: Registra un servicio REST que responde saludando al usuario.
    - `get("/pi", (req, resp) -> String.valueOf(Math.PI))`: Registra un servicio REST que devuelve el valor de PI.
