@@ -2,7 +2,7 @@
 document.getElementById("getForm").addEventListener("submit", function (event) {
     event.preventDefault();
     const name = document.getElementById("name").value;
-    fetch(`/app/hello?name=${name}`)
+    fetch(`/App/hello?name=${name}`) // Aquí corregí la ruta
         .then(response => response.text())
         .then(data => document.getElementById("getResponse").innerText = data);
 });
@@ -11,7 +11,7 @@ document.getElementById("getForm").addEventListener("submit", function (event) {
 document.getElementById("postForm").addEventListener("submit", function (event) {
     event.preventDefault();
     const name = document.getElementById("postname").value;
-    fetch(`/app/hello`, {
+    fetch(`/App/hello`, { // Aquí corregí la ruta
         method: "POST",
         body: `name=${name}`,
         headers: {

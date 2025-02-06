@@ -30,7 +30,7 @@ public class HttpServerFrameTest {
 
     @Test
     void testHelloEndpoint() throws IOException {
-        URL url = new URL(SERVER_URL + "/hello?name=Juan");
+        URL url = new URL(SERVER_URL + "/App/hello?name=Juan");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
@@ -40,7 +40,7 @@ public class HttpServerFrameTest {
 
     @Test
     void testPiEndpoint() throws IOException {
-        URL url = new URL(SERVER_URL + "/pi");
+        URL url = new URL(SERVER_URL + "/App/pi");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
