@@ -4,11 +4,14 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class HttpServer {
-    private static final int PORT = 8080;
+    private static final int PORT = 35000;
     private static final String STATIC_FILES_PATH = "src/main/resources/www";
+    private static final Set<String> users = new HashSet<>();
 
     public static void main(String[] args) {
         startServer();
@@ -46,22 +49,37 @@ public class HttpServer {
                     String name = queryParams.getOrDefault("name", "World");
                     String response = "Hello " + name;
                     sendResponse(out, "200 OK", "text/plain", response.getBytes());
-                } else if (path.startsWith("/App/pi")) {
-                    String response = String.valueOf(Math.PI);
-                    sendResponse(out, "200 OK", "text/plain", response.getBytes());
+                } else if (path.startsWith("/App/rests/hello")) {
+                    Map<String, String> queryParams = parseQueryParams(path);
+                    String response = helloRestService(queryParams.get("name"));
+                    sendResponse(out, "200 OK", "application/json", response.getBytes());
                 } else {
                     serveStaticFile(out, path);
                 }
-            } else if (method.equals("POST") && path.startsWith("/App/hello")) {
+            } else if (method.equals("POST") && path.startsWith("/App/rests/hello")) {
                 String body = readRequestBody(in);
-                Map<String, String> params = parsePostParams(body);
-                String name = params.getOrDefault("name", "World");
-                String response = "Usuario registrado: " + name;
-                sendResponse(out, "200 OK", "text/plain", response.getBytes());
+                String response = postRestService(body);
+                sendResponse(out, "200 OK", "application/json", response.getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String helloRestService(String name) {
+        if (name == null || name.isEmpty()) {
+            name = "Unknown";
+        }
+        String message = users.contains(name) ? "Hola, " + name + ". ¡Bienvenido de nuevo!" : "El usuario " + name + " no está registrado.";
+        return jsonResponse(message);
+    }
+
+    private static String postRestService(String body) {
+        String name = body.contains("name=") ? body.split("=")[1] : "Unknown";
+        if (!users.contains(name)) {
+            users.add(name);
+        }
+        return jsonResponse("Usuario " + name + " registrado correctamente.");
     }
 
     private static Map<String, String> parseQueryParams(String path) {
@@ -80,34 +98,13 @@ public class HttpServer {
         return params;
     }
 
-    private static Map<String, String> parsePostParams(String body) {
-        Map<String, String> params = new HashMap<>();
-        for (String param : body.split("&")) {
-            String[] keyValue = param.split("=");
-            if (keyValue.length == 2) {
-                params.put(keyValue[0], keyValue[1]);
-            }
-        }
-        return params;
-    }
-
     private static String readRequestBody(BufferedReader in) throws IOException {
         StringBuilder body = new StringBuilder();
-        String line;
-
-        // Leer hasta la línea en blanco (fin de los encabezados HTTP)
-        while ((line = in.readLine()) != null && !line.isEmpty()) {
-            // No hacemos nada aquí, solo leemos los headers
-        }
-
-        // Leer el cuerpo del request
         while (in.ready()) {
             body.append((char) in.read());
         }
-
         return body.toString();
     }
-
 
     private static void serveStaticFile(OutputStream out, String path) throws IOException {
         if (path.equals("/App/") || path.equals("/App/index.html")) {
@@ -137,5 +134,9 @@ public class HttpServer {
         writer.println();
         out.write(content);
         out.flush();
+    }
+
+    private static String jsonResponse(String message) {
+        return "{\"message\": \"" + message + "\"}";
     }
 }
