@@ -9,7 +9,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpServerTest {
+public class HttpServerFrameTest {
 
     private static final String SERVER_URL = "http://localhost:8080";
 
@@ -18,18 +18,19 @@ public class HttpServerTest {
         // Iniciar el servidor en un hilo separado
         new Thread(() -> {
             try {
-                HttpServer.main(new String[]{});
+                co.edu.eci.arep.HttpServer.main(new String[]{});
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
-        // Esperar para que el servidor se inicie
+
+        // Esperar unos segundos para que el servidor inicie
         Thread.sleep(2000);
     }
 
     @Test
     void testHelloEndpoint() throws IOException {
-        URL url = new URL(SERVER_URL + "/App/hello?name=Juan");
+        URL url = new URL(SERVER_URL + "/hello?name=Juan");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
@@ -39,7 +40,7 @@ public class HttpServerTest {
 
     @Test
     void testPiEndpoint() throws IOException {
-        URL url = new URL(SERVER_URL + "/App/pi");
+        URL url = new URL(SERVER_URL + "/pi");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
@@ -49,14 +50,12 @@ public class HttpServerTest {
 
     @Test
     void testStaticFileServing() throws IOException {
-        // Se asume que en el directorio de archivos estáticos existe un index.html con contenido HTML
-        URL url = new URL(SERVER_URL + "/App/index.html");
+        URL url = new URL(SERVER_URL + "/index.html");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
         assertEquals(200, conn.getResponseCode());
-        String response = readResponse(conn);
-        assertTrue(response.contains("<html>") || response.contains("<!DOCTYPE html>"));
+        assertTrue(readResponse(conn).contains("<html>"));
     }
 
     private String readResponse(HttpURLConnection conn) throws IOException {
