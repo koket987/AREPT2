@@ -28,7 +28,7 @@ Sigue estas instrucciones para configurar y ejecutar el proyecto en tu máquina 
 Asegúrate de tener instalado lo siguiente:
 
 - Java 8 o superior
-- Apache Maven
+- Apache  Maven
 - Git para clonar el repositorio
 - Una terminal o línea de comandos
 
@@ -94,7 +94,7 @@ http://localhost:8080
 
 #### API REST
 
-Utiliza `curl` para probar los endpoints de la API:
+Utiliza `curl` desde tu terminal favorita para probar los endpoints de la API:
 
 - **GET** (Saludo):  
   ```bash
@@ -104,6 +104,7 @@ Utiliza `curl` para probar los endpoints de la API:
   ```
   Hello Santiago
   ```
+![image](https://github.com/user-attachments/assets/ba2702d3-791f-4769-9a60-d200ef0cb429)
 
 - **GET** (Valor de PI):  
   ```bash
@@ -113,13 +114,16 @@ Utiliza `curl` para probar los endpoints de la API:
   ```
   3.141592653589793
   ```
+![image](https://github.com/user-attachments/assets/9ceef4da-1eac-4a97-8f44-e2c208c0ff98)
 
 #### Archivos Estáticos
 
-Accede a los archivos incluidos, por ejemplo:
+Accede a los archivos incluidos desde culaquier navegador, por ejemplo:
 
 - `http://localhost:8080/App/index.html`  
   (El servidor ajusta la ruta para servir `index.html` desde el directorio estático configurado).
+  cha![image](https://github.com/user-attachments/assets/eaa7c390-8e7f-4b4d-add3-fb682ce408d8)
+
 
 - `http://localhost:8080/styles.css`
 - `http://localhost:8080/script.js`
