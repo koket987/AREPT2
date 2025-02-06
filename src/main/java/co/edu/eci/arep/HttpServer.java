@@ -3,13 +3,12 @@ package co.edu.eci.arep;
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpServer {
     private static final int PORT = 8080;
-    private static final String STATIC_FILES_PATH = "src/main/resources/www"; // Asegurar ruta correcta
+    private static final String STATIC_FILES_PATH = "src/main/resources/www";
 
     public static void main(String[] args) {
         startServer();
@@ -53,6 +52,12 @@ public class HttpServer {
                 } else {
                     serveStaticFile(out, path);
                 }
+            } else if (method.equals("POST") && path.startsWith("/App/hello")) {
+                String body = readRequestBody(in);
+                Map<String, String> params = parsePostParams(body);
+                String name = params.getOrDefault("name", "World");
+                String response = "Usuario registrado: " + name;
+                sendResponse(out, "200 OK", "text/plain", response.getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,11 +80,40 @@ public class HttpServer {
         return params;
     }
 
+    private static Map<String, String> parsePostParams(String body) {
+        Map<String, String> params = new HashMap<>();
+        for (String param : body.split("&")) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length == 2) {
+                params.put(keyValue[0], keyValue[1]);
+            }
+        }
+        return params;
+    }
+
+    private static String readRequestBody(BufferedReader in) throws IOException {
+        StringBuilder body = new StringBuilder();
+        String line;
+
+        // Leer hasta la línea en blanco (fin de los encabezados HTTP)
+        while ((line = in.readLine()) != null && !line.isEmpty()) {
+            // No hacemos nada aquí, solo leemos los headers
+        }
+
+        // Leer el cuerpo del request
+        while (in.ready()) {
+            body.append((char) in.read());
+        }
+
+        return body.toString();
+    }
+
+
     private static void serveStaticFile(OutputStream out, String path) throws IOException {
         if (path.equals("/App/") || path.equals("/App/index.html")) {
-            path = "/index.html"; // Asegurar que el index se sirva correctamente
+            path = "/index.html";
         } else {
-            path = path.replaceFirst("/App", ""); // Ajustar ruta de archivos estáticos
+            path = path.replaceFirst("/App", "");
         }
 
         File file = new File(STATIC_FILES_PATH + path);
